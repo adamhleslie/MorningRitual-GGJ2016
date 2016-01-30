@@ -101,8 +101,7 @@ public class VRLinearDrive : MonoBehaviour
 			if ( doorHandle && linearMapping.value == 1 )
 			{
 				Debug.Log("Loading: " + Globals.nextScene);
-				SceneManager.LoadScene(Globals.nextScene);
-				Globals.nextScene++;
+				SceneManager.LoadScene(Globals.nextScene++);
 			}
 
 			transform.position = Vector3.Lerp( startPosition.position, endPosition.position, linearMapping.value );
