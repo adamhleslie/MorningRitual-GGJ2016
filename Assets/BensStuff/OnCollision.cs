@@ -14,21 +14,15 @@ public class OnCollision : MonoBehaviour {
 
     void OnCollisionStay(Collision collision)
     {
-        if (numberStay > 5)
+        if (Globals.testCollisions.Count > 5)
         {
             Globals.testingFloor = true;
-
         }
         Debug.Log("Stay" + Globals.testingFloor);
     }
 
     void OnCollisionExit(Collision collision)
     {
-        numberStay--;
-        if (numberStay <= 5)
-        {
-            Globals.testingFloor = false;
-        }
         Debug.Log("Exit");
     }
 }
