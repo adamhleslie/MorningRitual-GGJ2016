@@ -11,6 +11,5 @@ public class Globals{
     
     //radio stuff
     public static bool [] ritualSequence; 
+    public static int numScenes = 3;
 }
-
-
