@@ -22,6 +22,8 @@ ExportedObj/
 # Unity3D generated meta files
 *.pidb.meta
 
+ProjectSettings/GrapicsSettings.asset
+
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 ProjectSettings/ProjectVersion.txt
