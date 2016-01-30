@@ -19,6 +19,9 @@ public class VRPlayer : MonoBehaviour
 	[Tooltip( "List of possible VRHands, including no-SteamVR fallback VRHands." )]
 	public VRHand[] hands;
 
+	[Tooltip( "Reference to the physics collider that follows the player's HMD position." )]
+	public Collider headCollider;
+
 	[Tooltip( "These objects are enabled when SteamVR is available" )]
 	public GameObject rigSteamVR;
 
@@ -33,7 +36,18 @@ public class VRPlayer : MonoBehaviour
 	/// <summary>
 	/// Singleton instance of the VRPlayer. Only one can exist at a time.
 	/// </summary>
-	public static VRPlayer instance { get; private set; }
+	private static VRPlayer _instance;
+	public static VRPlayer instance
+	{
+		get
+		{
+			if ( _instance == null )
+			{
+				_instance = FindObjectOfType<VRPlayer>();
+			}
+			return _instance;
+		}
+	}
 
 	/// <summary>
 	/// Get the number of active VRHands.
@@ -81,6 +95,78 @@ public class VRPlayer : MonoBehaviour
 		return null;
 	}
 
+	public VRHand leftHand
+	{
+		get
+		{
+			for ( int j = 0; j < hands.Length; j++ )
+			{
+				if ( !hands[j].gameObject.activeInHierarchy )
+				{
+					continue;
+				}
+
+				if ( hands[j].GuessCurrentHandType() != VRHand.HandType.Left )
+				{
+					continue;
+				}
+
+				return hands[j];
+			}
+
+			return null;
+		}
+	}
+
+	public VRHand rightHand
+	{
+		get
+		{
+			for ( int j = 0; j < hands.Length; j++ )
+			{
+				if ( !hands[j].gameObject.activeInHierarchy )
+				{
+					continue;
+				}
+
+				if ( hands[j].GuessCurrentHandType() != VRHand.HandType.Right )
+				{
+					continue;
+				}
+
+				return hands[j];
+			}
+
+			return null;
+		}
+	}
+
+	public SteamVR_Controller.Device leftController
+	{
+		get
+		{
+			VRHand h = leftHand;
+			if ( h )
+			{
+				return h.controller;
+			}
+			return null;
+		}
+	}
+
+	public SteamVR_Controller.Device rightController
+	{
+		get
+		{
+			VRHand h = rightHand;
+			if ( h )
+			{
+				return h.controller;
+			}
+			return null;
+		}
+	}
+
 	/// <summary>
 	/// Get the HMD transform. This might return the fallback camera transform if SteamVR is unavailable or disabled.
 	/// </summary>
@@ -88,10 +174,13 @@ public class VRPlayer : MonoBehaviour
 	{
 		get
 		{
-			for ( int i = 0; i < hmdTransforms.Length; i++ )
+			if ( hmdTransforms != null )
 			{
-				if ( hmdTransforms[i].gameObject.activeInHierarchy )
-					return hmdTransforms[i];
+				for ( int i = 0; i < hmdTransforms.Length; i++ )
+				{
+					if ( hmdTransforms[i].gameObject.activeInHierarchy )
+						return hmdTransforms[i];
+				}
 			}
 			return null;
 		}
@@ -164,10 +253,7 @@ public class VRPlayer : MonoBehaviour
 
 	void OnEnable()
 	{
-		if ( instance == null )
-		{
-			instance = this;
-		}
+		_instance = this;
 
 		if ( SteamVR.instance != null )
 		{
@@ -176,14 +262,6 @@ public class VRPlayer : MonoBehaviour
 		else
 		{
 			ActivateRig( rig2DFallback );
-		}
-	}
-
-	void OnDisable()
-	{
-		if ( instance == this )
-		{
-			instance = null;
 		}
 	}
 
@@ -285,5 +363,12 @@ public class VRPlayer : MonoBehaviour
 			audioListener.transform.localPosition = Vector3.zero;
 			audioListener.transform.localRotation = Quaternion.identity;
 		}
+	}
+
+	public void Teleport( Transform destination )
+	{
+		gameObject.transform.position = destination.position;
+		gameObject.transform.rotation = destination.rotation;
+		gameObject.transform.localScale = destination.localScale;
 	}
 }

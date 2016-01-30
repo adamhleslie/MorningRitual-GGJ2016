@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Radio : MonoBehaviour {
   public AudioSource[] audios;
+  private bool radioIsOn = false;
+  
   
 	// Use this for initialization
 	void Start () {
@@ -16,9 +18,18 @@ public class Radio : MonoBehaviour {
   
   //will change this to "onButtonPress" 
   void OnCollisionEnter(Collision c) {
-    
-		if (c.gameObject.name == "Enemy") {
-			audios[0].Play ();
-		}
+    int audioIndex = 0;
+    if (!radioIsOn){
+      radioIsOn = true;
+      //play first clip, then when each clip ends, play the next clip
+      
+      if (c.gameObject.name == "Radio") {
+        audios[0].Play ();
+      }
+    }
+    else{
+      
+    }
+		
 	}
 }
