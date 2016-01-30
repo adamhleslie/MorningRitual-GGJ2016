@@ -2,11 +2,11 @@
 using System.Collections;
 
 public class Radio : MonoBehaviour {
-  public AudioSource audio;
+  public AudioSource[] audios;
   
 	// Use this for initialization
 	void Start () {
-     AudioSource[] audios = GetComponents<AudioSource>();     
+     audios = GetComponents<AudioSource>();     
 	}
 	
 	// Update is called once per frame
@@ -18,7 +18,7 @@ public class Radio : MonoBehaviour {
   void OnCollisionEnter(Collision c) {
     
 		if (c.gameObject.name == "Enemy") {
-			clickAudio.Play ();
+			audios[0].Play ();
 		}
 	}
 }
