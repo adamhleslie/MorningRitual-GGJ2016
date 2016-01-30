@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Radio : MonoBehaviour {
-  public AudioSource[] radioAudio;
+public class RadioScript : MonoBehaviour {
+  public AudioSource radioAudio;
   public AudioClip[] clips;
   private bool radioIsOn = false;
   private int audioClipIndex = 0;
@@ -10,16 +10,16 @@ public class Radio : MonoBehaviour {
   
 	// Use this for initialization
 	void Start () {
-     radioAudio = GetComponents<AudioSource>();     
+     radioAudio = GetComponent<AudioSource>();     
 	}
 	
 	//Update is called once per frame
 	void Update () {
-    if (!radioAudio[audioClipIndex].isPlaying) {
+    if (!radioAudio.isPlaying) {
       if (audioClipIndex<Globals.numScenes){
         audioClipIndex+=1;
-        radioAudio[audioClipIndex].clip = clips[audioClipIndex];
-        radioAudio[audioClipIndex].Play();
+        radioAudio.clip = clips[audioClipIndex];
+        radioAudio.Play();
       }
     }
 	}
@@ -29,11 +29,11 @@ public class Radio : MonoBehaviour {
     if (c.gameObject.name == "Radio"){
       if (!radioIsOn) {
         radioIsOn = true;
-        radioAudio[audioClipIndex].mute = false;
-        radioAudio[audioClipIndex].Play ();
+        radioAudio.Play ();
+        radioAudio.mute = false;
       }
       else{
-        radioAudio[audioClipIndex].mute = true;
+        radioAudio.mute = true;
       }
     }
 	}
