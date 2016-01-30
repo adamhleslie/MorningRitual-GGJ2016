@@ -1,15 +1,11 @@
 ﻿//===================== Copyright (c) Valve Corporation. All Rights Reserved. ======================
 
-// INCLUDES DOOR HANDLE CODE
-
 using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 [RequireComponent( typeof( VRInteractable ) )]
 public class VRLinearDrive : MonoBehaviour
 {
-	public bool doorHandle;
 	public Transform startPosition;
 	public Transform endPosition;
 	public VRLinearMapping linearMapping;
@@ -96,14 +92,6 @@ public class VRLinearDrive : MonoBehaviour
 
 		if ( repositionGameObject )
 		{
-
-			// DOOR HANDLE CODE
-			if ( doorHandle && linearMapping.value == 1 )
-			{
-				Debug.Log("Loading: " + Globals.nextScene);
-				SceneManager.LoadScene(Globals.nextScene++);
-			}
-
 			transform.position = Vector3.Lerp( startPosition.position, endPosition.position, linearMapping.value );
 		}
 	}
