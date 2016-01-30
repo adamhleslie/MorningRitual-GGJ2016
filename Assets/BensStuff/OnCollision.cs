@@ -3,12 +3,13 @@ using System.Collections;
 
 public class OnCollision : MonoBehaviour {
     int numberStay = 0;
-	
-	// Update is called once per frame
-	void OnCollisionEnter(Collision collision)
+
+    // Update is called once per frame
+    void OnCollisionEnter(Collision collision)
     {
         numberStay++;
         Debug.Log("Enter");
+        Globals.testCollisions.Add(collision);
 	}
 
     void OnCollisionStay(Collision collision)
