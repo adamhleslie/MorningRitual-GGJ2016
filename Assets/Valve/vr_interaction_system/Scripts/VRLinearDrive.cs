@@ -1,6 +1,6 @@
 ﻿//===================== Copyright (c) Valve Corporation. All Rights Reserved. ======================
 
-// INCLUDES DOOR HANDLE LOADING NEXT SCENE CODE
+// INCLUDES DOOR HANDLE CODE
 
 using UnityEngine;
 using System.Collections;
@@ -9,13 +9,25 @@ using UnityEngine.SceneManagement;
 [RequireComponent( typeof( VRInteractable ) )]
 public class VRLinearDrive : MonoBehaviour
 {
+	public bool doorHandle;
 	public Transform startPosition;
 	public Transform endPosition;
 	public VRLinearMapping linearMapping;
 	public bool repositionGameObject = true;
-	public bool doorHandle;
+	public bool maintainMomemntum = true;
+	public float momemtumDampenRate = 5.0f;
 
 	private float initialMappingOffset;
+	private int numMappingChangeSamples = 5;
+	private float[] mappingChangeSamples;
+	private float prevMapping = 0.0f;
+	private float mappingChangeRate;
+	private int sampleCount = 0;
+
+	void Awake()
+	{
+		mappingChangeSamples = new float[numMappingChangeSamples];
+	}
 
 	void Start()
 	{
@@ -37,19 +49,20 @@ public class VRLinearDrive : MonoBehaviour
 
 	void HandHoverUpdate( VRHand hand )
 	{
-		if ( hand.currentAttachedObject )
-			return;
-
 		if ( hand.GetStandardInteractionButtonDown() )
 		{
 			hand.HoverLock( GetComponent<VRInteractable>() );
 
 			initialMappingOffset = linearMapping.value - CalculateLinearMapping( hand.transform );
+			sampleCount = 0;
+			mappingChangeRate = 0.0f;
 		}
 
 		if ( hand.GetStandardInteractionButtonUp() )
 		{
 			hand.HoverUnlock( GetComponent<VRInteractable>() );
+
+			CalculateMappingChangeRate();
 		}
 
 		if ( hand.GetStandardInteractionButton() )
@@ -58,12 +71,33 @@ public class VRLinearDrive : MonoBehaviour
 		}
 	}
 
+	void CalculateMappingChangeRate()
+	{
+		//Compute the mapping change rate
+		mappingChangeRate = 0.0f;
+		int mappingSamplesCount = Mathf.Min( sampleCount, mappingChangeSamples.Length );
+		if ( mappingSamplesCount != 0 )
+		{
+			for ( int i = 0; i < mappingSamplesCount; ++i )
+			{
+				mappingChangeRate += mappingChangeSamples[i];
+			}
+			mappingChangeRate /= mappingSamplesCount;
+		}
+	}
+
 	void UpdateLinearMapping( Transform tr )
 	{
+		prevMapping = linearMapping.value;
 		linearMapping.value = Mathf.Clamp01( initialMappingOffset + CalculateLinearMapping( tr ) );
+
+		mappingChangeSamples[sampleCount % mappingChangeSamples.Length] = ( 1.0f / Time.deltaTime ) * ( linearMapping.value - prevMapping );
+		sampleCount++;
 
 		if ( repositionGameObject )
 		{
+
+			// DOOR HANDLE CODE
 			if ( doorHandle && linearMapping.value == 1 )
 			{
 				Debug.Log("Loading: " + Globals.nextScene);
@@ -84,5 +118,20 @@ public class VRLinearDrive : MonoBehaviour
 		Vector3 displacement = tr.position - startPosition.position;
 
 		return Vector3.Dot( displacement, direction ) / length;
+	}
+
+	void Update()
+	{
+		if ( maintainMomemntum && mappingChangeRate != 0.0f )
+		{
+			//Dampen the mapping change rate and apply it to the mapping
+			mappingChangeRate = Mathf.Lerp( mappingChangeRate, 0.0f, momemtumDampenRate * Time.deltaTime );
+			linearMapping.value = Mathf.Clamp01( linearMapping.value + ( mappingChangeRate * Time.deltaTime ) );
+
+			if ( repositionGameObject )
+			{
+				transform.position = Vector3.Lerp( startPosition.position, endPosition.position, linearMapping.value );
+			}
+		}
 	}
 }

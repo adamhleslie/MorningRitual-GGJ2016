@@ -8,14 +8,12 @@ using System.Collections;
 [RequireComponent( typeof( VelocityEstimator ) )]
 public class VRThrowable : MonoBehaviour
 {
-	[Tooltip( "Should this object snap to the specified attachment transform, or keep its current position?" )]
-	public bool snapOnAttach = false;
+	[EnumFlags]
+	[Tooltip( "The flags used to attach this object to the hand." )]
+	public VRHand.AttachmentFlags attachmentFlags = VRHand.AttachmentFlags.ParentToHand | VRHand.AttachmentFlags.DetachFromOtherHand;
 
 	[Tooltip( "Name of the attachment transform under in the hand's hierarchy which the object should should snap to." )]
 	public string attachmentPoint;
-
-	[Tooltip( "Should the hand detach all of its attached objects when attaching this one?" )]
-	public bool detachOthers = false;
 
 	[Tooltip( "How fast must this object be moving to attach due to a trigger hold instead of a trigger press?" )]
 	public float catchSpeedThreshold = 0.0f;
@@ -33,6 +31,8 @@ public class VRThrowable : MonoBehaviour
 
 	void OnHandHoverBegin( VRHand hand )
 	{
+		bool showHint = true;
+
 		// "Catch" the throwable by holding down the interaction button instead of pressing it.
 		// Only do this if the throwable is moving faster than the prescribed threshold speed,
 		// and if it isn't attached to another hand
@@ -43,10 +43,21 @@ public class VRThrowable : MonoBehaviour
 				Rigidbody rb = GetComponent<Rigidbody>();
 				if ( rb.velocity.magnitude >= catchSpeedThreshold )
 				{
-					hand.AttachObject( gameObject, snapOnAttach, attachmentPoint, detachOthers );
+					hand.AttachObject( gameObject, attachmentFlags, attachmentPoint );
+					showHint = false;
 				}
 			}
 		}
+
+		if ( showHint )
+		{
+			VRControllerButtonHints.Show( hand, Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger );
+		}
+	}
+
+	void OnHandHoverEnd( VRHand hand )
+	{
+		VRControllerButtonHints.Hide( hand );
 	}
 
 	void HandHoverUpdate( VRHand hand )
@@ -54,7 +65,8 @@ public class VRThrowable : MonoBehaviour
 		//Trigger got pressed
 		if ( hand.GetStandardInteractionButtonDown() )
 		{
-			hand.AttachObject( gameObject, snapOnAttach, attachmentPoint, detachOthers );
+			hand.AttachObject( gameObject, attachmentFlags, attachmentPoint );
+			VRControllerButtonHints.Hide( hand );
 		}
 	}
 
@@ -89,11 +101,12 @@ public class VRThrowable : MonoBehaviour
 
 		// Make the object travel at the release velocity for the amount
 		// of time it will take until the next fixed update, at which
-		// point physics will happily take over simulation
-		float t = ( Time.fixedDeltaTime + Time.fixedTime ) - Time.time;
-		transform.position += t * velocity;
-		// TODO: update transform.rotation? probably too subtle, but should be fixed
-		// TODO: verify the fix using large fixed timestep, determine if the warning should be deleted
+		// point Unity physics will take over
+		float timeUntilFixedUpdate = ( Time.fixedDeltaTime + Time.fixedTime ) - Time.time;
+		transform.position += timeUntilFixedUpdate * velocity;
+		float angle = Mathf.Rad2Deg * angularVelocity.magnitude;
+		Vector3 axis = angularVelocity.normalized;
+		transform.rotation *= Quaternion.AngleAxis( angle * timeUntilFixedUpdate, axis );
 	}
 
 	void HandAttachedUpdate( VRHand hand )
@@ -103,9 +116,10 @@ public class VRThrowable : MonoBehaviour
 		{
 			// Detach ourselves late in the frame.
 			// This is so that any vehicles the player is attached to
-			// have a chance to update themselves.
-			// If we detach now, our position will be behind the frame,
-			// and it will feel like a weird teleport.
+			// have a chance to finish updating themselves.
+			// If we detach now, our position could be behind what it
+			// will be at the end of the frame, and the object may appear
+			// to teleport behind the hand when the player releases it.
 			StartCoroutine( LateDetach( hand ) );
 		}
 	}
@@ -115,5 +129,19 @@ public class VRThrowable : MonoBehaviour
 		yield return new WaitForEndOfFrame();
 
 		hand.DetachObject( gameObject, restoreOriginalParent );
+	}
+
+
+	void OnHandFocusAcquired( VRHand hand )
+	{
+		gameObject.SetActive( true );
+		velocityEstimator.BeginEstimatingVelocity();
+	}
+
+
+	void OnHandFocusLost( VRHand hand )
+	{
+		gameObject.SetActive( false );
+		velocityEstimator.FinishEstimatingVelocity();
 	}
 }

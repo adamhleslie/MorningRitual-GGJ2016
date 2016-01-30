@@ -9,6 +9,8 @@ public class VRInteractableHoverEvents : MonoBehaviour
 {
 	public UnityEvent onHandHoverBegin;
 	public UnityEvent onHandHoverEnd;
+	public UnityEvent onAttachedToHand;
+	public UnityEvent onDetachedFromHand;
 
 	void OnHandHoverBegin()
 	{
@@ -18,5 +20,15 @@ public class VRInteractableHoverEvents : MonoBehaviour
 	void OnHandHoverEnd()
 	{
 		onHandHoverEnd.Invoke();
+	}
+
+	void OnAttachedToHand( VRHand hand )
+	{
+		onAttachedToHand.Invoke();
+	}
+
+	void OnDetachedFromHand( VRHand hand )
+	{
+		onDetachedFromHand.Invoke();
 	}
 }

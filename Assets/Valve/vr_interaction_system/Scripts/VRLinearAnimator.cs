@@ -8,7 +8,8 @@ public class VRLinearAnimator : MonoBehaviour
 	public VRLinearMapping linearMapping;
 	public Animator animator;
 
-	private float currentLinearMapping;
+	private float currentLinearMapping = float.NaN;
+	private int framesUnchanged = 0;
 	
 	void Awake()
 	{
@@ -30,11 +31,15 @@ public class VRLinearAnimator : MonoBehaviour
 			currentLinearMapping = linearMapping.value;
 			animator.enabled = true;
 			animator.Play( 0, 0, currentLinearMapping );
+			framesUnchanged = 0;
 		}
 		else
 		{
-			animator.enabled = false;
+			framesUnchanged++;
+			if ( framesUnchanged > 2 )
+			{
+				animator.enabled = false;
+			}
 		}
-		
 	}
 }
