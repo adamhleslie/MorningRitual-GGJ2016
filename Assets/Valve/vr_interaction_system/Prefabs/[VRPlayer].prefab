@@ -1,23 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &104694
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 431050}
-  - 23: {fileID: 2306254}
-  - 33: {fileID: 3362334}
-  - 114: {fileID: 11432782}
-  m_Layer: 8
-  m_Name: SteamVR Render Model
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &105880
 GameObject:
   m_ObjectHideFlags: 0
@@ -60,24 +42,6 @@ GameObject:
   - 114: {fileID: 11449998}
   m_Layer: 8
   m_Name: Hand 2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &115758
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 488656}
-  - 23: {fileID: 2383328}
-  - 33: {fileID: 3324230}
-  - 114: {fileID: 11414540}
-  m_Layer: 8
-  m_Name: SteamVR Render Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -294,7 +258,7 @@ Transform:
   m_GameObject: {fileID: 176082}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .0500000007, y: .0500000007, z: .0500000007}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 452008}
   m_RootOrder: 0
@@ -310,18 +274,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 420060}
   m_RootOrder: 3
---- !u!4 &431050
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 104694}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 437038}
-  m_RootOrder: 0
 --- !u!4 &437038
 Transform:
   m_ObjectHideFlags: 1
@@ -329,10 +281,9 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 109934}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .25, y: 1, z: 0}
+  m_LocalPosition: {x: 0.25, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 431050}
+  m_Children: []
   m_Father: {fileID: 474424}
   m_RootOrder: 1
 --- !u!4 &452008
@@ -383,23 +334,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 137818}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.25, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 488656}
-  m_Father: {fileID: 474424}
-  m_RootOrder: 0
---- !u!4 &488656
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 115758}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.25, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 474554}
+  m_Father: {fileID: 474424}
   m_RootOrder: 0
 --- !u!4 &490600
 Transform:
@@ -424,14 +362,14 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: .0196078438}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0.019607844}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 1
     height: 1
-  near clip plane: .00999999978
+  near clip plane: 0.01
   far clip plane: 120
   field of view: 60
   orthographic: 0
@@ -443,10 +381,11 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
-  m_StereoSeparation: .0219999999
+  m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
 --- !u!20 &2079630
 Camera:
@@ -457,14 +396,14 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: .0196078438}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0.019607844}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
     y: 0
     width: 1
     height: 1
-  near clip plane: .00999999978
+  near clip plane: 0.01
   far clip plane: 120
   field of view: 60
   orthographic: 0
@@ -476,35 +415,12 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
-  m_StereoSeparation: .0219999999
+  m_StereoSeparation: 0.022
   m_StereoMirrorMode: 0
---- !u!23 &2306254
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 104694}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_Materials:
-  - {fileID: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
-  m_ProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
 --- !u!23 &2340426
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -523,43 +439,14 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!23 &2383328
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 115758}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_Materials:
-  - {fileID: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
-  m_ProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
---- !u!33 &3324230
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 115758}
-  m_Mesh: {fileID: 0}
 --- !u!33 &3349876
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -567,13 +454,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 176082}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!33 &3362334
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 104694}
-  m_Mesh: {fileID: 0}
 --- !u!81 &8131342
 AudioListener:
   m_ObjectHideFlags: 1
@@ -599,19 +479,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5be45115742b07478e21c85fcc233ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11414540
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 115758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5890e3cad70bea64d91aef9145ba3454, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: 0
-  modelOverride: vr_controller_05_wireless_b
 --- !u!114 &11421182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -626,19 +493,6 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 5
---- !u!114 &11432782
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 104694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5890e3cad70bea64d91aef9145ba3454, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: 0
-  modelOverride: vr_controller_05_wireless_b
 --- !u!114 &11449998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -653,12 +507,16 @@ MonoBehaviour:
   otherHand: {fileID: 11487740}
   startingHandType: 2
   hoverSphereTransform: {fileID: 0}
-  hoverSphereRadius: .100000001
+  hoverSphereRadius: 0.1
   hoverLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  hoverUpdateInterval: 0.1
   noSteamVRFallbackCamera: {fileID: 0}
+  createRenderModel: 1
+  showRenderModel: 1
   showDebugText: 0
+  spewDebugText: 0
 --- !u!114 &11451316
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -703,6 +561,7 @@ MonoBehaviour:
   - {fileID: 11487740}
   - {fileID: 11449998}
   - {fileID: 11478932}
+  headCollider: {fileID: 0}
   rigSteamVR: {fileID: 107414}
   rig2DFallback: {fileID: 143224}
   audioListener: {fileID: 429196}
@@ -732,12 +591,16 @@ MonoBehaviour:
   otherHand: {fileID: 0}
   startingHandType: 2
   hoverSphereTransform: {fileID: 0}
-  hoverSphereRadius: .100000001
+  hoverSphereRadius: 0.1
   hoverLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  hoverUpdateInterval: 0.1
   noSteamVRFallbackCamera: {fileID: 2076746}
+  createRenderModel: 0
+  showRenderModel: 1
   showDebugText: 0
+  spewDebugText: 0
 --- !u!114 &11484678
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -749,9 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bca9ccf900ccc84c887d783321d27e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _origin: {fileID: 0}
   _head: {fileID: 0}
-  prevParent: {fileID: 0}
   wireframe: 0
   flip: {fileID: 11410100}
 --- !u!114 &11486186
@@ -782,12 +643,16 @@ MonoBehaviour:
   otherHand: {fileID: 11449998}
   startingHandType: 2
   hoverSphereTransform: {fileID: 0}
-  hoverSphereRadius: .100000001
+  hoverSphereRadius: 0.1
   hoverLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  hoverUpdateInterval: 0.1
   noSteamVRFallbackCamera: {fileID: 0}
+  createRenderModel: 1
+  showRenderModel: 1
   showDebugText: 0
+  spewDebugText: 0
 --- !u!124 &12423016
 Behaviour:
   m_ObjectHideFlags: 1

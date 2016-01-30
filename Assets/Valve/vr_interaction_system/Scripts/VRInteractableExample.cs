@@ -10,6 +10,8 @@ public class VRInteractableExample : MonoBehaviour
 	private Vector3 oldPosition;
 	private Quaternion oldRotation;
 
+	private VRHand.AttachmentFlags attachmentFlags = VRHand.defaultAttachmentFlags & (~VRHand.AttachmentFlags.SnapOnAttach);
+
 	void Awake()
 	{
 		textMesh = GetComponentInChildren<TextMesh>();
@@ -53,7 +55,7 @@ public class VRInteractableExample : MonoBehaviour
 				hand.HoverLock( GetComponent<VRInteractable>() );
 
 				// Attach this object to the hand
-				hand.AttachObject( gameObject, false );
+				hand.AttachObject( gameObject, attachmentFlags );
 			}
 			else
 			{

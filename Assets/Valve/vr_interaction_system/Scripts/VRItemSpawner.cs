@@ -9,9 +9,10 @@ public class VRItemSpawner : MonoBehaviour
 	//Public variables
 	public GameObject objectToSpawn;
 	public bool requireTriggerPress;
-	public bool snapOnAttach = true;
 	public string attachmentPoint;
-	public bool detachOthers;
+
+	[EnumFlags]
+	public VRHand.AttachmentFlags attachmentFlags = VRHand.defaultAttachmentFlags;
 
 	//Private variables
 	private bool alreadySpawned;
@@ -51,7 +52,7 @@ public class VRItemSpawner : MonoBehaviour
 		if ( !alreadySpawned )
 		{
 			GameObject objectToAttach = GameObject.Instantiate( objectToSpawn );
-			hand.AttachObject( objectToAttach, snapOnAttach, attachmentPoint, detachOthers );
+			hand.AttachObject( objectToAttach, attachmentFlags, attachmentPoint );
 
 			alreadySpawned = true;
 		}

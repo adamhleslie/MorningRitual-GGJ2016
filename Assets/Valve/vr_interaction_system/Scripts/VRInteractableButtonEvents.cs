@@ -21,51 +21,55 @@ public class VRInteractableButtonEvents : MonoBehaviour
 	
 	}
 
-	void HandHoverUpdate ( VRHand hand )
+	void Update ()
 	{
-		if ( hand.controller != null )
-		{
-			SteamVR_Controller.Device controller = hand.controller;
+        for ( int i = 0; i < VRPlayer.instance.handCount; i++ )
+        {
+            VRHand hand = VRPlayer.instance.GetHand( i );
 
-			if ( controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger ) )
-			{
-				onTriggerDown.Invoke();
-			}
+            if ( hand.controller != null )
+            {
+                if ( hand.controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger ) )
+                {
+                    onTriggerDown.Invoke();
+                }
 
-			if ( controller.GetPressUp( Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger ) )
-			{
-				onTriggerUp.Invoke();
-			}
+                if ( hand.controller.GetPressUp( Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger ) )
+                {
+                    onTriggerUp.Invoke();
+                }
 
-			if ( controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_Grip ) )
-			{
-				onGripDown.Invoke();
-			}
+                if ( hand.controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_Grip ) )
+                {
+                    onGripDown.Invoke();
+                }
 
-			if ( controller.GetPressUp( Valve.VR.EVRButtonId.k_EButton_Grip ) )
-			{
-				onGripUp.Invoke();
-			}
+                if ( hand.controller.GetPressUp( Valve.VR.EVRButtonId.k_EButton_Grip ) )
+                {
+                    onGripUp.Invoke();
+                }
 
-			if ( controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
-			{
-				onTouchpadDown.Invoke();
-			}
+                if ( hand.controller.GetPressDown( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
+                {
+                    onTouchpadDown.Invoke();
+                }
 
-			if ( controller.GetPressUp( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
-			{
-				onTouchpadUp.Invoke();
-			}
+                if ( hand.controller.GetPressUp( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
+                {
+                    onTouchpadUp.Invoke();
+                }
 
-			if ( controller.GetTouchDown( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
-			{
-				onTouchpadTouch.Invoke();
-			}
+                if ( hand.controller.GetTouchDown( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
+                {
+                    onTouchpadTouch.Invoke();
+                }
 
-			if ( controller.GetTouchUp( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
-			{
-				onTouchpadRelease.Invoke();
-			}
-		}
+                if ( hand.controller.GetTouchUp( Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad ) )
+                {
+                    onTouchpadRelease.Invoke();
+                }
+            }
+        }
+
 	}
 }

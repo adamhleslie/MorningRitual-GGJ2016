@@ -17,9 +17,6 @@ public class VelocityEstimator : MonoBehaviour
 	private Vector3[] velocitySamples;
 	private Vector3[] angularVelocitySamples;
 
-	public Vector3 estimatedVelocity { get; private set; }
-	public Vector3 estimatedAngularVelocity { get; private set; }
-
 	public void BeginEstimatingVelocity()
 	{
 		FinishEstimatingVelocity();
@@ -41,11 +38,15 @@ public class VelocityEstimator : MonoBehaviour
 		// Compute average velocity
 		Vector3 velocity = Vector3.zero;
 		int velocitySampleCount = Mathf.Min( sampleCount, velocitySamples.Length );
-		for ( int i = 0; i < velocitySampleCount; i++ )
+		if ( velocitySampleCount != 0 )
 		{
-			velocity += velocitySamples[i];
+			for ( int i = 0; i < velocitySampleCount; i++ )
+			{
+				velocity += velocitySamples[i];
+			}
+			velocity *= ( 1.0f / velocitySampleCount );
 		}
-		velocity *= ( 1.0f / velocitySampleCount );
+
 		return velocity;
 	}
 
@@ -54,11 +55,15 @@ public class VelocityEstimator : MonoBehaviour
 		// Compute average angular velocity
 		Vector3 angularVelocity = Vector3.zero;
 		int angularVelocitySampleCount = Mathf.Min( sampleCount, angularVelocitySamples.Length );
-		for ( int i = 0; i < angularVelocitySampleCount; i++ )
+		if ( angularVelocitySampleCount != 0 )
 		{
-			angularVelocity += angularVelocitySamples[i];
+			for ( int i = 0; i < angularVelocitySampleCount; i++ )
+			{
+				angularVelocity += angularVelocitySamples[i];
+			}
+			angularVelocity *= ( 1.0f / angularVelocitySampleCount );
 		}
-		angularVelocity *= ( 1.0f / angularVelocitySampleCount );
+
 		return angularVelocity;
 	}
 
@@ -91,20 +96,6 @@ public class VelocityEstimator : MonoBehaviour
 			BeginEstimatingVelocity();
 		}
 	}
-
-#if DEBUG
-	void Start()
-	{
-		const float idealFixedTimestep = 0.012f;
-		if ( Time.fixedDeltaTime > idealFixedTimestep )
-		{
-			Debug.LogWarning( string.Format(
-				"VelocityEstimator: Time.fixedDeltaTime {0} exceeds recommendation for VR {1} physics interactions.",
-				Time.fixedDeltaTime,
-				idealFixedTimestep ) );
-		}
-	}
-#endif
 
 	IEnumerator EstimateVelocityCoroutine()
 	{

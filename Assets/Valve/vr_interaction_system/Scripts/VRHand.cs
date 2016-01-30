@@ -1,8 +1,10 @@
 ﻿//===================== Copyright (c) Valve Corporation. All Rights Reserved. ======================
 
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 /// <summary>
 /// Links with an appropriate SteamVR controller and facilitates
@@ -18,6 +20,27 @@ public class VRHand : MonoBehaviour
 		Any
 	};
 
+	/// <summary>
+	/// The flags used to determine how an object is attached to the hand.
+	/// </summary>
+	[Flags]
+	public enum AttachmentFlags
+	{
+		///<summary>The object should snap to the position of the specified attachment point on the hand.</summary>
+		SnapOnAttach = 1 << 0,
+		///<summary>Other objects attached to this hand will be detached.</summary>
+		DetachOthers = 1 << 1,
+		///<summary>This object will be detached from the other hand.</summary>
+		DetachFromOtherHand = 1 << 2,
+		///<summary>The object will be parented to the hand.</summary>
+		ParentToHand = 1 << 3,
+	};
+
+	public const AttachmentFlags defaultAttachmentFlags = AttachmentFlags.ParentToHand |
+														  AttachmentFlags.DetachOthers |
+														  AttachmentFlags.DetachFromOtherHand |
+														  AttachmentFlags.SnapOnAttach;
+
 	public VRHand otherHand;
 	public HandType startingHandType;
 
@@ -25,27 +48,40 @@ public class VRHand : MonoBehaviour
 	public float hoverSphereRadius = 0.05f;
 	public LayerMask hoverLayerMask = -1;
 	public float hoverUpdateInterval = 0.1f;
-	
+
 	public Camera noSteamVRFallbackCamera;
 	private float noSteamVRFallbackInteractorDistance = -1.0f;
-	
+
 	public SteamVR_Controller.Device controller;
 
-	public bool showDebugText = false;
+	public bool createRenderModel = false;
+	private SteamVR_RenderModel renderModel = null;
 
-	private struct AttachedObject
+	public bool showRenderModel = true;
+
+	public bool showDebugText = false;
+	public bool spewDebugText = false;
+
+	public struct AttachedObject
 	{
 		public GameObject attachedObject;
 		public GameObject originalParent;
+		public bool isParentedToHand;
 	}
 
 	private List<AttachedObject> attachedObjects = new List<AttachedObject>();
+
+	public ReadOnlyCollection<AttachedObject> AttachedObjects
+	{
+		get { return attachedObjects.AsReadOnly(); }
+	}
 
 	public bool hoverLocked { get; private set; }
 
 	private VRInteractable _hoveringInteractable;
 
 	private TextMesh debugText;
+	private int prevOverlappingColliders = 0;
 
 	/// <summary>
 	/// The VRInteractable object this VRHand is currently hovering over.
@@ -59,6 +95,7 @@ public class VRHand : MonoBehaviour
 			{
 				if ( _hoveringInteractable )
 				{
+					VRHandDebugLog( "HoverEnd " + _hoveringInteractable.gameObject );
 					_hoveringInteractable.SendMessage( "OnHandHoverEnd", this, SendMessageOptions.DontRequireReceiver );
 					this.BroadcastMessage( "OnParentHandHoverEnd", _hoveringInteractable, SendMessageOptions.DontRequireReceiver ); // let objects attached to the hand know that a hover has ended
 				}
@@ -67,6 +104,7 @@ public class VRHand : MonoBehaviour
 
 				if ( _hoveringInteractable )
 				{
+					VRHandDebugLog( "HoverBegin " + _hoveringInteractable.gameObject );
 					_hoveringInteractable.SendMessage( "OnHandHoverBegin", this, SendMessageOptions.DontRequireReceiver );
 					this.BroadcastMessage( "OnParentHandHoverBegin", _hoveringInteractable, SendMessageOptions.DontRequireReceiver ); // let objects attached to the hand know that a hover has begun
 				}
@@ -92,7 +130,7 @@ public class VRHand : MonoBehaviour
 		}
 	}
 
-	private Transform GetAttachmentTransform( string attachmentPoint = "" )
+	public Transform GetAttachmentTransform( string attachmentPoint = "" )
 	{
 		Transform attachmentTransform = null;
 
@@ -125,13 +163,18 @@ public class VRHand : MonoBehaviour
 			return startingHandType;
 		}
 
+		if ( startingHandType == HandType.Any && otherHand != null && otherHand.controller == null )
+		{
+			return HandType.Right;
+		}
+
 		if ( controller == null || otherHand == null || otherHand.controller == null )
 		{
 			return startingHandType;
 		}
 
-		var invXform = SteamVR_Controller.Input( ( int )Valve.VR.OpenVR.k_unTrackedDeviceIndex_Hmd ).transform.GetInverse();
-		
+		var invXform = SteamVR_Controller.Input( (int)Valve.VR.OpenVR.k_unTrackedDeviceIndex_Hmd ).transform.GetInverse();
+
 		if ( Vector3.Dot( Vector3.left, invXform * controller.transform.pos ) >
 			 Vector3.Dot( Vector3.left, invXform * otherHand.controller.transform.pos ) )
 		{
@@ -145,23 +188,29 @@ public class VRHand : MonoBehaviour
 	/// Attach a GameObject to this GameObject.
 	/// </summary>
 	/// <param name="objectToAttach">The GameObject to attach.</param>
-	/// <param name="snapOnAttach">Should the GameObject snap to an attachment point?</param>
+	/// <param name="flags">The flags to use for attaching the object.</param>
 	/// <param name="attachmentPoint">Name of the GameObject in the hierarchy of this VRHand which should act as the attachment point for this GameObject.</param>
-	/// <param name="detachOthers">Should all other attached objects in the attached object stack of this VRHand be detached?</param>
 	/// <seealso cref="DetachObject"/>
-	public void AttachObject( GameObject objectToAttach, bool snapOnAttach = true, string attachmentPoint = "", bool detachOthers = true )
+	public void AttachObject( GameObject objectToAttach, AttachmentFlags flags = defaultAttachmentFlags, string attachmentPoint = "" )
 	{
+		if ( flags == 0 )
+		{
+			flags = defaultAttachmentFlags;
+		}
+
 		//Make sure top object on stack is non-null
 		CleanUpAttachedObjectStack();
 
 		//Detach the object if it is already attached so that it can get re-attached at the top of the stack
 		DetachObject( objectToAttach );
-		if ( otherHand )
+
+		//Detach from the other hand if requested
+		if ( ( ( flags & AttachmentFlags.DetachFromOtherHand ) == AttachmentFlags.DetachFromOtherHand ) && otherHand )
 		{
 			otherHand.DetachObject( objectToAttach );
 		}
 
-		if ( detachOthers )
+		if ( ( flags & AttachmentFlags.DetachOthers ) == AttachmentFlags.DetachOthers )
 		{
 			//Detach all the objects from the stack
 			while ( attachedObjects.Count > 0 )
@@ -174,23 +223,49 @@ public class VRHand : MonoBehaviour
 		{
 			currentAttachedObject.SendMessage( "OnHandFocusLost", this, SendMessageOptions.DontRequireReceiver );
 		}
+
 		AttachedObject attachedObject = new AttachedObject();
 		attachedObject.attachedObject = objectToAttach;
 		attachedObject.originalParent = objectToAttach.transform.parent != null ? objectToAttach.transform.parent.gameObject : null;
+		if ( ( flags & AttachmentFlags.ParentToHand ) == AttachmentFlags.ParentToHand )
+		{
+			//Parent the object to the hand
+			objectToAttach.transform.parent = GetAttachmentTransform( attachmentPoint );
+			attachedObject.isParentedToHand = true;
+		}
+		else
+		{
+			attachedObject.isParentedToHand = false;
+		}
 		attachedObjects.Add( attachedObject );
 
-		//Parent the object to the hand
-		objectToAttach.transform.parent = GetAttachmentTransform( attachmentPoint );
-		
-		if ( snapOnAttach )
+		if ( ( flags & AttachmentFlags.SnapOnAttach ) == AttachmentFlags.SnapOnAttach )
 		{
 			objectToAttach.transform.localPosition = Vector3.zero;
 			objectToAttach.transform.localRotation = Quaternion.identity;
 		}
 
+		VRHandDebugLog( "AttachObject " + objectToAttach );
 		objectToAttach.SendMessage( "OnAttachedToHand", this, SendMessageOptions.DontRequireReceiver );
-		
+
 		UpdateHovering();
+	}
+
+	public void DestroyAttachedObjects()
+	{
+		//Make sure top object on stack is non-null
+		CleanUpAttachedObjectStack();
+
+		//Detach and destroy all the objects from the stack
+		while ( attachedObjects.Count > 0 )
+		{
+			GameObject detachedObject = attachedObjects[0].attachedObject;
+			DetachObject( attachedObjects[0].attachedObject );
+			if ( detachedObject != null )
+			{
+				Destroy( detachedObject );
+			}
+		}
 	}
 
 	/// <summary>
@@ -203,15 +278,21 @@ public class VRHand : MonoBehaviour
 		int index = attachedObjects.FindIndex( l => l.attachedObject == objectToDetach );
 		if ( index != -1 )
 		{
+			VRHandDebugLog( "DetachObject " + objectToDetach );
+
 			GameObject prevTopObject = currentAttachedObject;
 
 			Transform parentTransform = null;
-			if ( restoreOriginalParent && ( attachedObjects[index].originalParent != null ) )
+			if ( attachedObjects[index].isParentedToHand )
 			{
-				parentTransform = attachedObjects[index].originalParent.transform;
+				if ( restoreOriginalParent && ( attachedObjects[index].originalParent != null ) )
+				{
+					parentTransform = attachedObjects[index].originalParent.transform;
+				}
+				attachedObjects[index].attachedObject.transform.parent = parentTransform;
 			}
-			attachedObjects[index].attachedObject.transform.parent = parentTransform;
 
+			attachedObjects[index].attachedObject.SetActive( true );
 			attachedObjects[index].attachedObject.SendMessage( "OnDetachedFromHand", this, SendMessageOptions.DontRequireReceiver );
 			attachedObjects.RemoveAt( index );
 
@@ -220,10 +301,51 @@ public class VRHand : MonoBehaviour
 			//Give focus to the top most object on the stack if it changed
 			if ( newTopObject != null && newTopObject != prevTopObject )
 			{
+				newTopObject.SetActive( true );
 				newTopObject.SendMessage( "OnHandFocusAcquired", this, SendMessageOptions.DontRequireReceiver );
 			}
 		}
+
+		CleanUpAttachedObjectStack();
 	}
+
+    /// <summary>
+    /// Get the world velocity of the VR Hand.
+    /// Note: controller velocity value only updates on controller events (Button but and down) so good for throwing
+    /// </summary>
+    public Vector3 GetTrackedObjectVelocity()
+    {
+        SteamVR_TrackedObject trackedObj = gameObject.GetComponent<SteamVR_TrackedObject>();
+        if (trackedObj)
+        {
+            var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
+            if (origin != null)
+            {
+                return origin.TransformVector(controller.velocity);
+            }
+            return controller.velocity;
+        }
+        return controller.velocity;
+    }
+
+    /// <summary>
+    /// Get the world angular velocity of the VR Hand.
+    /// Note: controller velocity value only updates on controller events (Button but and down) so good for throwing
+    /// </summary>
+    public Vector3 GetTrackedObjectAngularVelocity()
+    {
+        SteamVR_TrackedObject trackedObj = gameObject.GetComponent<SteamVR_TrackedObject>();
+        if (trackedObj)
+        {
+            var origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
+            if (origin != null)
+            {
+                return origin.TransformVector(controller.angularVelocity);
+            }
+            return controller.angularVelocity;
+        }
+        return controller.angularVelocity;
+    }
 
 	private void CleanUpAttachedObjectStack()
 	{
@@ -236,6 +358,15 @@ public class VRHand : MonoBehaviour
 		{
 			hoverSphereTransform = this.transform;
 		}
+
+		//
+		// Find render model and deactivate until we know which controller we're tracking
+		//
+		renderModel = GetComponentInChildren<SteamVR_RenderModel>();
+		if ( ( renderModel != null ) && ( renderModel.gameObject != gameObject ) )
+		{
+			renderModel.gameObject.SetActive( false );
+		}
 	}
 
 	IEnumerator Start()
@@ -245,6 +376,8 @@ public class VRHand : MonoBehaviour
 		// - don't need to find the device
 		if ( noSteamVRFallbackCamera )
 			yield break;
+
+		//Debug.Log( "VRHand - initializing connection routine" );
 
 		// Acquire the correct device index for the hand we want to be
 		// Also for the other hand if we get there first
@@ -256,6 +389,8 @@ public class VRHand : MonoBehaviour
 			// We have a controller now, break out of the loop!
 			if ( controller != null )
 				break;
+			
+			//Debug.Log( "VRHand - checking controllers..." );
 
 			// Initialize both hands simultaneously
 			if ( startingHandType == HandType.Left || startingHandType == HandType.Right )
@@ -266,6 +401,7 @@ public class VRHand : MonoBehaviour
 				int rightIndex = SteamVR_Controller.GetDeviceIndex( SteamVR_Controller.DeviceRelation.Rightmost );
 				if ( leftIndex == -1 || rightIndex == -1 || leftIndex == rightIndex )
 				{
+					//Debug.Log( string.Format( "...Left/right hand relationship not yet established: leftIndex={0}, rightIndex={1}", leftIndex, rightIndex ) );
 					continue;
 				}
 
@@ -285,18 +421,27 @@ public class VRHand : MonoBehaviour
 				var vr = SteamVR.instance;
 				for ( int i = 0; i < Valve.VR.OpenVR.k_unMaxTrackedDeviceCount; i++ )
 				{
-					if ( vr.hmd.GetTrackedDeviceClass( ( uint )i ) != Valve.VR.ETrackedDeviceClass.Controller )
+					if ( vr.hmd.GetTrackedDeviceClass( (uint)i ) != Valve.VR.ETrackedDeviceClass.Controller )
+					{
+						//Debug.Log( string.Format( "VRHand - device {0} is not a controller", i ) );
 						continue;
-
+					}
+						
 					var device = SteamVR_Controller.Input( i );
-					if ( !device.connected )
+					if ( !device.valid )
+					{
+						//Debug.Log( string.Format( "VRHand - device {0} is not valid", i ) );
 						continue;
+					}
 
 					if ( ( otherHand != null ) && ( otherHand.controller != null ) )
 					{
 						// Other hand is using this index, so we cannot use it.
-						if ( i == ( int )otherHand.controller.index )
+						if ( i == (int)otherHand.controller.index )
+						{
+							//Debug.Log( string.Format( "VRHand - device {0} is owned by the other hand", i ) );
 							continue;
+						}
 					}
 
 					InitController( i );
@@ -307,6 +452,11 @@ public class VRHand : MonoBehaviour
 
 	void UpdateHovering()
 	{
+		if ( ( noSteamVRFallbackCamera == null ) && ( controller == null ) )
+		{
+			return;
+		}
+
 		if ( hoverLocked )
 			return;
 
@@ -315,6 +465,12 @@ public class VRHand : MonoBehaviour
 
 		// Pick the closest hovering
 		Collider[] overlappingColliders = Physics.OverlapSphere( hoverSphereTransform.position, hoverSphereRadius, hoverLayerMask.value );
+		if ( overlappingColliders.Length > 0 && overlappingColliders.Length != prevOverlappingColliders )
+		{
+			prevOverlappingColliders = overlappingColliders.Length;
+			VRHandDebugLog( "Found " + overlappingColliders.Length + " overlapping colliders." );
+		}
+
 		foreach ( Collider collider in overlappingColliders )
 		{
 			VRInteractable contacting = collider.GetComponentInParent<VRInteractable>();
@@ -322,6 +478,16 @@ public class VRHand : MonoBehaviour
 			// Yeah, it's null, skip
 			if ( contacting == null )
 				continue;
+
+			// Ignore this collider for hovering
+			VRIgnoreHovering ignore = collider.GetComponent<VRIgnoreHovering>();
+			if ( ignore != null )
+			{
+				if ( ignore.onlyIgnoreHand == null || ignore.onlyIgnoreHand == this )
+				{
+					continue;
+				}
+			}
 
 			// Can't hover over the object if it's attached
 			if ( attachedObjects.FindIndex( l => l.attachedObject == contacting.gameObject ) != -1 )
@@ -332,7 +498,7 @@ public class VRHand : MonoBehaviour
 				continue;
 
 			// Best candidate so far...
-			float distance = Vector3.Distance( contacting.transform.position, transform.position );
+			float distance = Vector3.Distance( contacting.transform.position, hoverSphereTransform.position );
 			if ( distance < closestDistance )
 			{
 				closestDistance = distance;
@@ -398,7 +564,7 @@ public class VRHand : MonoBehaviour
 				debugText.fontSize = 120;
 				debugText.characterSize = 0.001f;
 				debugText.transform.parent = transform;
-				
+
 				debugText.transform.localRotation = Quaternion.Euler( 90.0f, 0.0f, 0.0f );
 			}
 
@@ -453,15 +619,27 @@ public class VRHand : MonoBehaviour
 	{
 		UpdateNoSteamVRFallback();
 
-		if ( hoveringInteractable )
-		{
-			hoveringInteractable.SendMessage( "HandHoverUpdate", this, SendMessageOptions.DontRequireReceiver );
-		}
-
 		GameObject attached = currentAttachedObject;
 		if ( attached )
 		{
 			attached.SendMessage( "HandAttachedUpdate", this, SendMessageOptions.DontRequireReceiver );
+		}
+
+		if ( ( renderModel != null ) && ( renderModel.gameObject != gameObject ) )
+		{
+			if ( showRenderModel == false )
+			{
+				renderModel.gameObject.SetActive( false );
+			}
+			else
+			{
+				renderModel.gameObject.SetActive( ( attached ) ? false : true );
+			}
+		}
+
+		if ( hoveringInteractable )
+		{
+			hoveringInteractable.SendMessage( "HandHoverUpdate", this, SendMessageOptions.DontRequireReceiver );
 		}
 	}
 
@@ -472,6 +650,15 @@ public class VRHand : MonoBehaviour
 		Gizmos.DrawWireSphere( sphereTransform.position, hoverSphereRadius );
 	}
 
+
+	private void VRHandDebugLog( string msg )
+	{
+		if ( spewDebugText || !Application.isEditor )
+		{
+			Debug.Log( "VRHand: " + msg );
+		}
+	}
+
 	/// <summary>
 	/// Continue to hover over this object indefinitely, whether or not the VRHand moves out of its interaction trigger volume.
 	/// </summary>
@@ -479,6 +666,7 @@ public class VRHand : MonoBehaviour
 	/// <seealso cref="HoverUnlock"/>
 	public void HoverLock( VRInteractable interactable )
 	{
+		VRHandDebugLog( "HoverLock " + interactable );
 		hoverLocked = true;
 		hoveringInteractable = interactable;
 	}
@@ -490,6 +678,7 @@ public class VRHand : MonoBehaviour
 	/// <seealso cref="HoverLock"/>
 	public void HoverUnlock( VRInteractable interactable )
 	{
+		VRHandDebugLog( "HoverUnlock " + interactable );
 		if ( hoveringInteractable == interactable )
 		{
 			hoverLocked = false;
@@ -552,7 +741,33 @@ public class VRHand : MonoBehaviour
 		if ( controller == null )
 		{
 			controller = SteamVR_Controller.Input( index );
-			gameObject.AddComponent<SteamVR_TrackedObject>().index = ( SteamVR_TrackedObject.EIndex )index;
+			gameObject.AddComponent<SteamVR_TrackedObject>().index = (SteamVR_TrackedObject.EIndex)index;
+
+			//
+			// Update and show SteamVR_RenderModel
+			//
+			if ( createRenderModel )
+			{
+				renderModel = new GameObject( "SteamVR_RenderModel" ).AddComponent<SteamVR_RenderModel>();
+				renderModel.transform.parent = transform;
+				renderModel.transform.localPosition = Vector3.zero;
+				renderModel.transform.localRotation = Quaternion.identity;
+				renderModel.transform.localScale = Vector3.one;
+			}
+			else
+			{
+				renderModel = GetComponentInChildren<SteamVR_RenderModel>();
+			}
+
+			if ( renderModel != null )
+			{
+				renderModel.modelOverride = null;
+				renderModel.index = (SteamVR_TrackedObject.EIndex)index;
+				renderModel.enabled = true;
+				renderModel.UpdateModel();
+			}
+
+			this.BroadcastMessage( "OnHandInitialized", index, SendMessageOptions.DontRequireReceiver ); // let child objects know we've initialized
 		}
 	}
 }
@@ -566,7 +781,7 @@ public class VRHandEditor : UnityEditor.Editor
 	{
 		DrawDefaultInspector();
 
-		VRHand vrHand = ( VRHand )target;
+		VRHand vrHand = (VRHand)target;
 
 		if ( vrHand.otherHand )
 		{
