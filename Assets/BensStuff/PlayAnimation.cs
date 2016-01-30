@@ -17,7 +17,7 @@ public class PlayAnimation : MonoBehaviour {
     void OnHandHoverBegin(VRHand hand)
     {
         anim.Play();
-        Globals.buttonPressed = true;
-        Debug.Log("Exit");
+        Globals.buttonPressed = !Globals.buttonPressed;
+        Debug.Log(Globals.buttonPressed);
     }
 }
