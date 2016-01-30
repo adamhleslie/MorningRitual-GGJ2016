@@ -4,7 +4,66 @@ timeCreated: 1454174966
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    100000: body
+    100002: Cube_005
+    100004: Cube_006
+    100006: leftDoor
+    100008: lowerLeftHandle
+    100010: lowerRightHandle
+    100012: NurbsPath
+    100014: rightDoor
+    100016: //RootNode
+    100018: sink
+    100020: upperLeftHandle
+    100022: upperRightMat
+    400000: body
+    400002: Cube_005
+    400004: Cube_006
+    400006: leftDoor
+    400008: lowerLeftHandle
+    400010: lowerRightHandle
+    400012: NurbsPath
+    400014: rightDoor
+    400016: //RootNode
+    400018: sink
+    400020: upperLeftHandle
+    400022: upperRightMat
+    2300000: body
+    2300002: Cube_005
+    2300004: Cube_006
+    2300006: leftDoor
+    2300008: lowerLeftHandle
+    2300010: lowerRightHandle
+    2300012: NurbsPath
+    2300014: rightDoor
+    2300016: sink
+    2300018: upperLeftHandle
+    2300020: upperRightMat
+    3300000: body
+    3300002: Cube_005
+    3300004: Cube_006
+    3300006: leftDoor
+    3300008: lowerLeftHandle
+    3300010: lowerRightHandle
+    3300012: NurbsPath
+    3300014: rightDoor
+    3300016: sink
+    3300018: upperLeftHandle
+    3300020: upperRightMat
+    4300000: upperLeftHandle
+    4300002: NurbsPath
+    4300004: sink
+    4300006: leftDoor
+    4300008: body
+    4300010: rightDoor
+    4300012: Cube_005
+    4300014: Cube_006
+    4300016: upperRightMat
+    4300018: lowerLeftHandle
+    4300020: lowerRightHandle
+    7400000: Default Take
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0

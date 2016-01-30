@@ -4,7 +4,31 @@ timeCreated: 1454174966
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
-  fileIDToRecycleName: {}
+  fileIDToRecycleName:
+    100000: antenna
+    100002: body
+    100004: button
+    100006: //RootNode
+    100008: speaker
+    400000: antenna
+    400002: body
+    400004: button
+    400006: //RootNode
+    400008: speaker
+    2300000: antenna
+    2300002: body
+    2300004: button
+    2300006: speaker
+    3300000: antenna
+    3300002: body
+    3300004: button
+    3300006: speaker
+    4300000: antenna
+    4300002: speaker
+    4300004: body
+    4300006: button
+    7400000: Default Take
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
