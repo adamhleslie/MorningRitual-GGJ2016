@@ -44,14 +44,14 @@ public class RadioScript : MonoBehaviour {
         bad-event-n: 2n+2
         conclusion: last thing obviously
       */
-      if (ritualSequenceIndex < Globals.currentLevel){ //news stories
+      if (ritualSequenceIndex < Globals.curScene){ //news stories
         if ((bool) (Globals.ritualSequence[ritualSequenceIndex]) == true)
           audioClipIndex=2*ritualSequenceIndex+1;
         else
           audioClipIndex=2*ritualSequenceIndex+2;
         ritualSequenceIndex++;
       }
-      else if(ritualSequenceIndex == Globals.currentLevel){ //conclusion
+      else if(ritualSequenceIndex == Globals.curScene){ //conclusion
         audioClipIndex=2*ritualSequenceIndex+1;
       }
       
