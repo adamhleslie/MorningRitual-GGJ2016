@@ -7,10 +7,7 @@ public class RadioScript : MonoBehaviour {
   private int ritualSequenceIndex = 0;
   
   void Awake(){
-    if (Globals.curScene >= 1 && Globals.curScene <= 3)
-    {
-        for (int i = 0; i < Globals.ritualSequence.Count; i++) { Globals.ritualSequence[i] = false; }
-    }
+    
   }
   
   // Use this for initialization
@@ -32,7 +29,14 @@ public class RadioScript : MonoBehaviour {
     audioClipIndex = 0;
     radioAudio = GetComponents<AudioSource>();
     radioAudio[audioClipIndex].Play();
-    foreach (AudioSource radioAudioSource in radioAudio) {radioAudioSource.playOnAwake = false;}
+    foreach (AudioSource radioAudioSource in radioAudio) {
+      radioAudioSource.playOnAwake = false;
+      radioAudioSource.loop = false;
+    }
+    
+    if (Globals.curScene >= 1 && Globals.curScene <= 3){
+      for (int i = 0; i < Globals.ritualSequence.Count; i++) { Globals.ritualSequence[i] = false; }
+    }
   }
 	
 	//Update is called once per frame
