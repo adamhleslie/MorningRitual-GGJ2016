@@ -3,12 +3,15 @@ using System.Collections;
 
 public class Coffee : MonoBehaviour {
 
+    public GameObject coffeeLiquid;
+    Transform coffeeLiquidTransform;
     float timeStart;
     float fillAmount;
 
     void Start () {
         timeStart = 0;
         fillAmount = 0;
+        coffeeLiquidTransform = coffeeLiquid.GetComponent<Transform>();
     }
 
     void OnTriggerEnter(Collider other) {
@@ -39,6 +42,7 @@ public class Coffee : MonoBehaviour {
             fillAmount += Time.time - timeStart;
             timeStart = 0;
             Debug.Log("Filled to " + fillAmount);
+            coffeeLiquidTransform.localScale = coffeeLiquidTransform.localScale + (Vector3.up * (fillAmount / 100));
         }
     }
 }
