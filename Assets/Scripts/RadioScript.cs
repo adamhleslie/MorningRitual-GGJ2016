@@ -51,6 +51,12 @@ public class RadioScript : MonoBehaviour {
       if (radioAudio.Length == 1){
         //;will fix this if i have time
       }
+      else if (Globals.curScene == 0){
+        if (audioClipIndex+1 < radioAudio.Length){
+        radioAudio[audioClipIndex+1].Play();
+        audioClipIndex+=1;
+      }
+      }
       else if (ritualSequenceIndex < Globals.curScene){ //news stories
         if ((bool) (Globals.ritualSequence[ritualSequenceIndex]) == true)
           audioClipIndex=2*ritualSequenceIndex+1; //play good event
