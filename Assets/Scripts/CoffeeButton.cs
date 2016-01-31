@@ -5,7 +5,6 @@ public class CoffeeButton : MonoBehaviour {
     
     Animation anim;
     public GameObject coffeeArea;
-    public GameObject coffee;
     public Material pressableMaterial;
     public Material usedMaterial;
     public int timeValidSeconds;
@@ -31,7 +30,6 @@ public class CoffeeButton : MonoBehaviour {
 			thisRenderer.material = pressableMaterial;
 			activated = false;
 			endTime = 0;
-			coffee.SendMessage("finishFilling");
 			coffeeAreaCollider.enabled = false;
 			Debug.Log("Disabled Coffee Area Collider");
 		}
