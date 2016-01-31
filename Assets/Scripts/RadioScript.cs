@@ -19,13 +19,15 @@ public class RadioScript : MonoBehaviour {
 	void Update () {
         if (Globals.radioIsOn && !radioAudio[audioClipIndex].isPlaying) {
       if (audioClipIndex+1 < radioAudio.Length){
+        /*ordering scheme, on a per scene basis: 
+          intro: 0
+          good-coffee: 1
+        */
         radioAudio[audioClipIndex+1].Play();
         audioClipIndex+=1;
       }
     }
     
-    //debugging shit, change to onButtonPress
-
     if (Globals.radioIsOn) {
         radioAudio[audioClipIndex].mute = false;
       }
