@@ -13,7 +13,7 @@ public class Globals{
     public static bool radioIsOn = true;
 
     //radio stuff
-    public static ArrayList ritualSequence = new ArrayList();
+    public static ArrayList ritualSequence = new ArrayList(); //coffee, dishes, piano, trash
     public static int numScenes = 3;
-    public static int level = 0;
+    public static int currentLevel = 0;
 }
