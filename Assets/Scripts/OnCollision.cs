@@ -18,7 +18,7 @@ public class OnCollision : MonoBehaviour {
         {
             Globals.testingFloor = true;
         }
-        Debug.Log("Stay" + Globals.testingFloor);
+        Debug.Log("Stay" + Globals.testingFloor + Globals.testCollisions.Count);
     }
 
     void OnCollisionExit(Collision collision)
