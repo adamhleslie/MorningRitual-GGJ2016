@@ -37,11 +37,6 @@ public class RadioScript : MonoBehaviour {
       }
       
       radioAudio[audioClipIndex].Play();
-      
-      // if (audioClipIndex+1 < radioAudio.Length){
-        // radioAudio[audioClipIndex+1].Play();
-        // audioClipIndex+=1;
-      // }
     }
     
     if (Globals.radioIsOn) {
