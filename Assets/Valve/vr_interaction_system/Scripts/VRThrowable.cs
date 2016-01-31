@@ -22,7 +22,7 @@ public class VRThrowable : MonoBehaviour
 	public bool restoreOriginalParent = false;
 
 	private VelocityEstimator velocityEstimator;
-	private bool attached = false;
+	bool attached = false;
 
 	void Awake()
 	{

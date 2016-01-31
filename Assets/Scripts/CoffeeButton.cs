@@ -12,12 +12,15 @@ public class CoffeeButton : MonoBehaviour {
     bool activated;
     MeshRenderer thisRenderer;
 
-    BoxCollider coffeeAreaCollider;
+    CapsuleCollider coffeeAreaCollider;
+    MeshRenderer coffeeFlowRenderer;
+    AudioSource coffeeFlowAudioSource;
 
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animation>();
-		coffeeAreaCollider = coffeeArea.GetComponent<BoxCollider>();
+		coffeeAreaCollider = coffeeArea.GetComponent<CapsuleCollider>();
+		coffeeFlowRenderer = coffeeArea.GetComponent<MeshRenderer>();
 		activated = false;
 		endTime = 0;
 		thisRenderer = this.GetComponent<MeshRenderer>();
@@ -31,6 +34,7 @@ public class CoffeeButton : MonoBehaviour {
 			activated = false;
 			endTime = 0;
 			coffeeAreaCollider.enabled = false;
+			coffeeFlowRenderer.enabled = false;
 			Debug.Log("Disabled Coffee Area Collider");
 		}
 	}
@@ -41,9 +45,11 @@ public class CoffeeButton : MonoBehaviour {
     	{
 	    	anim.Play();
 	        coffeeAreaCollider.enabled = true;
+	        coffeeFlowRenderer.enabled = true;
 	        thisRenderer.material = usedMaterial;
 	        activated = true;
 	        Debug.Log("Enabled Coffee Area Collider");
+	        coffeeFlowAudioSource.Play();
 	        endTime = timeValidSeconds + Time.time;
 	    }
     }

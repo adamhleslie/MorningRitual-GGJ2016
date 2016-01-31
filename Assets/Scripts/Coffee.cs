@@ -8,15 +8,28 @@ public class Coffee : MonoBehaviour {
     public GameObject coffeeLiquid;
     VRThrowable coffeeThrowable;
     Transform coffeeLiquidTransform;
+    AudioSource coffeeAudioSource;
     public float fillRate;
     float fillAmount;
     Vector3 initialScale;
 
+    public AudioClip[] sip;
+    public AudioClip spill;
+
     void Update() {
         if(fillAmount >= 0 && Vector3.Dot(coffeeLiquidTransform.up, Vector3.down) > 0)
         {
+            // EMPTY CUP
             fillAmount = 0;
-            coffeeLiquidTransform.localScale = initialScale + (Vector3.up * (fillAmount / 100));
+            coffeeLiquidTransform.localScale = initialScale;
+            if( coffeeThrowable.attached )
+            {
+                coffeeAudioSource.clip = sip[Random.Range(0, sip.Length)];
+            } else {
+                coffeeAudioSource.clip = spill;
+            }
+
+            coffeeAudioSource.Play();
         }
     }
 
