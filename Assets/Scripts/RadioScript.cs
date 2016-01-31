@@ -44,7 +44,10 @@ public class RadioScript : MonoBehaviour {
         bad-event-n: 2n+2
         conclusion: last thing
       */
-      if (ritualSequenceIndex < Globals.curScene){ //news stories
+      if (radioAudio.Length == 1){
+        //;will fix this if i have time
+      }
+      else if (ritualSequenceIndex < Globals.curScene){ //news stories
         if ((bool) (Globals.ritualSequence[ritualSequenceIndex]) == true)
           audioClipIndex=2*ritualSequenceIndex+1; //play good event
         else
