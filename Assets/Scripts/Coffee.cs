@@ -24,7 +24,9 @@ public class Coffee : MonoBehaviour {
             coffeeLiquidTransform.localScale = initialScale;
             if( coffeeThrowable.attached )
             {
+                Globals.ritualSequence[0] = true;
                 coffeeAudioSource.clip = sip[Random.Range(0, sip.Length)];
+                Debug.Log("COFFEE = " + Globals.ritualSequence[0]);
             } else {
                 coffeeAudioSource.clip = spill;
             }
@@ -38,6 +40,7 @@ public class Coffee : MonoBehaviour {
         coffeeThrowable = this.GetComponent<VRThrowable>();
         coffeeLiquidTransform = coffeeLiquid.GetComponent<Transform>();
         initialScale = coffeeLiquidTransform.localScale;
+        coffeeAudioSource = this.GetComponent<AudioSource>();
     }
 
     // void OnTriggerEnter(Collider other) {
