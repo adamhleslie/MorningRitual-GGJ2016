@@ -1,7 +1,10 @@
 ﻿//===================== Copyright (c) Valve Corporation. All Rights Reserved. ======================
 
+// INCLUDES DOOR HANDLE LOADING NEXT SCENE CODE
+
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 [RequireComponent( typeof( VRInteractable ) )]
 public class VRLinearDrive : MonoBehaviour
@@ -19,6 +22,16 @@ public class VRLinearDrive : MonoBehaviour
 	private float prevMapping = 0.0f;
 	private float mappingChangeRate;
 	private int sampleCount = 0;
+
+	public bool doorHandle;
+
+	// RUNS WHEN DOOR HANDLE PRESSED ALL THE WAY DOWN
+	void LoadScene()
+	{
+		Debug.Log("Loading: " + Globals.nextScene);
+		SceneManager.LoadScene(Globals.nextScene);
+		Globals.nextScene++;
+	}
 
 	void Awake()
 	{
@@ -92,6 +105,12 @@ public class VRLinearDrive : MonoBehaviour
 
 		if ( repositionGameObject )
 		{
+
+			if ( doorHandle && linearMapping.value == 1 )
+			{
+				LoadScene();
+			}
+
 			transform.position = Vector3.Lerp( startPosition.position, endPosition.position, linearMapping.value );
 		}
 	}
