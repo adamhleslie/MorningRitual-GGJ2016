@@ -21,6 +21,7 @@ public class PianoKeys : MonoBehaviour
 
     void OnHandHoverBegin(VRHand hand)
     {
+        Globals.ritualSequence[2] = true;
         anim.Play();
         pianoAudio.Play();
         Globals.buttonPressed = !Globals.buttonPressed;
