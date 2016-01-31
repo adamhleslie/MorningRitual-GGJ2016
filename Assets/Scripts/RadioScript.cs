@@ -5,6 +5,7 @@ public class RadioScript : MonoBehaviour {
   public AudioSource[] radioAudio;
   private int audioClipIndex = 0;
   private int ritualSequenceIndex = 0;
+  private ArrayList priorDayRitualSequence;
   
   void Awake(){
     
@@ -18,6 +19,7 @@ public class RadioScript : MonoBehaviour {
 	}
   
   void OnLevelWasLoaded(int level){
+    priorDayRitualSequence = new ArrayList(Globals.ritualSequence);
     switch (level){
       case 0: Globals.ritualSequence.Add(false); break; //add coffee to ritual list
       case 1: Globals.ritualSequence.Add(false); break; //add wash dishes to ritual list
@@ -34,9 +36,7 @@ public class RadioScript : MonoBehaviour {
       radioAudioSource.loop = false;
     }
     
-    if (Globals.curScene >= 1 && Globals.curScene <= 3){
-      for (int i = 0; i < Globals.ritualSequence.Count; i++) { Globals.ritualSequence[i] = false; }
-    }
+    for (int i = 0; i < Globals.ritualSequence.Count; i++) { Globals.ritualSequence[i] = false; }
   }
 	
 	//Update is called once per frame
@@ -58,7 +58,7 @@ public class RadioScript : MonoBehaviour {
       }
       }
       else if (ritualSequenceIndex < Globals.curScene){ //news stories
-        if ((bool) (Globals.ritualSequence[ritualSequenceIndex]) == true)
+        if ((bool) (priorDayRitualSequence[ritualSequenceIndex]) == true)
           audioClipIndex=2*ritualSequenceIndex+1; //play good event
         else
           audioClipIndex=2*ritualSequenceIndex+2; //play bad event

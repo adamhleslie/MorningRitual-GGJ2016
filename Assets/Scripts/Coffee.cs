@@ -17,7 +17,7 @@ public class Coffee : MonoBehaviour {
     public AudioClip spill;
 
     void Update() {
-        if(fillAmount >= 0 && Vector3.Dot(coffeeLiquidTransform.up, Vector3.down) > 0)
+        if(fillAmount >= 1 && Vector3.Dot(coffeeLiquidTransform.up, Vector3.down) > 0)
         {
             // EMPTY CUP
             fillAmount = 0;

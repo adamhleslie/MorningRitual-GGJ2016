@@ -29,8 +29,7 @@ public class VRLinearDrive : MonoBehaviour
 	void LoadScene()
 	{
 		bool nextLevel = true;
-		int max = 4;//Mathf.Min(Globals.curScene + 1, Globals.ritualSequence.Count);
-		for(int i = 0; i < max && nextLevel; i++)
+		for(int i = 0; i < Globals.ritualSequence.Count && nextLevel; i++)
 		{
 			nextLevel = (bool) Globals.ritualSequence[i];
 		}

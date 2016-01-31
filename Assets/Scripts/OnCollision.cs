@@ -2,14 +2,14 @@
 using System.Collections;
 
 public class OnCollision : MonoBehaviour {
-    int numberStay = 0;
+    int numberStay;
     public bool dishes;
     // ArrayList curCollisions = new ArrayList();
 
-    // void Start()
-    // {
-    //     curCollisions = new ArrayList();
-    // }
+    void Start()
+    {
+        numberStay = 0;
+    }
 
     // Update is called once per frame
     void OnCollisionEnter(Collision collision)
@@ -20,12 +20,12 @@ public class OnCollision : MonoBehaviour {
         }
 
         Debug.Log("Entered");
-        if(dishes && numberStay == 2)
+        if(Globals.ritualSequence.Count >= 2 && dishes && numberStay == 2)
         {
             Debug.Log("Dishes DONE");
             Globals.ritualSequence[1] = true;
         }
-        else if (!dishes && numberStay == 5)
+        else if (Globals.ritualSequence.Count >= 4 && !dishes && numberStay == 5)
         {
             Debug.Log("TRASHCAN DONE");
             Globals.ritualSequence[3] = true;
