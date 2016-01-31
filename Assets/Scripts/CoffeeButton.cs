@@ -24,6 +24,7 @@ public class CoffeeButton : MonoBehaviour {
 		activated = false;
 		endTime = 0;
 		thisRenderer = this.GetComponent<MeshRenderer>();
+		coffeeFlowAudioSource = this.GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame

@@ -28,9 +28,9 @@ public class VRLinearDrive : MonoBehaviour
 	// RUNS WHEN DOOR HANDLE PRESSED ALL THE WAY DOWN
 	void LoadScene()
 	{
-		Debug.Log("Loading: " + Globals.nextScene);
-		SceneManager.LoadScene(Globals.nextScene);
-		Globals.nextScene++;
+		Globals.curScene++;
+		Debug.Log("Loading: " + Globals.curScene);
+		SceneManager.LoadScene(Globals.curScene);
 	}
 
 	void Awake()

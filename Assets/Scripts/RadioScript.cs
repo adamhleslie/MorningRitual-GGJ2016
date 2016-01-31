@@ -7,7 +7,7 @@ public class RadioScript : MonoBehaviour {
   private int ritualSequenceIndex = 0;
   
   void Awake(){
-    if (Globals.level >= 1 && Globals.level <= 3)
+    if (Globals.curScene >= 1 && Globals.curScene <= 3)
     {
         for (int i = 0; i < Globals.ritualSequence.Count; i++) { Globals.ritualSequence[i] = false; }
     }
@@ -20,14 +20,13 @@ public class RadioScript : MonoBehaviour {
     foreach (AudioSource radioAudioSource in radioAudio) {radioAudioSource.playOnAwake = false;}
 	}
   
-  OnLevelWasLoaded(int level){
+  void OnLevelWasLoaded(int level){
     switch (level){
       case 0: Globals.ritualSequence.Add(false); break; //add coffee to ritual list
       case 1: Globals.ritualSequence.Add(false); break; //add wash dishes to ritual list
       case 2: Globals.ritualSequence.Add(false); break; //add play piano to ritual list
       case 3: Globals.ritualSequence.Add(false); break; //add throw away trash to ritual list
     }
-    Globals.currentLevel = level;
     Globals.radioIsOn = true;
     
     audioClipIndex = 0;
