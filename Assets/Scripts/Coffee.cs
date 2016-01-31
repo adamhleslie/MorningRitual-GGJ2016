@@ -22,14 +22,9 @@ public class Coffee : MonoBehaviour {
             // EMPTY CUP
             fillAmount = 0;
             coffeeLiquidTransform.localScale = initialScale;
-            if( coffeeThrowable.attached )
-            {
                 Globals.ritualSequence[0] = true;
                 coffeeAudioSource.clip = sip[Random.Range(0, sip.Length)];
                 Debug.Log("COFFEE = " + Globals.ritualSequence[0]);
-            } else {
-                coffeeAudioSource.clip = spill;
-            }
 
             coffeeAudioSource.Play();
         }

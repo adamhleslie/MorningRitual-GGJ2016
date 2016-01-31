@@ -13,6 +13,10 @@ public class RadioScript : MonoBehaviour {
   
   // Use this for initialization
 	void Start () {
+    if(Globals.ritualSequence.Count == 0)
+    {
+      Globals.ritualSequence.Add(false);
+    }
     radioAudio = GetComponents<AudioSource>();
     radioAudio[audioClipIndex].Play();
     foreach (AudioSource radioAudioSource in radioAudio) {radioAudioSource.playOnAwake = false;}
@@ -20,11 +24,15 @@ public class RadioScript : MonoBehaviour {
   
   void OnLevelWasLoaded(int level){
     priorDayRitualSequence = new ArrayList(Globals.ritualSequence);
-    switch (level){
-      case 0: Globals.ritualSequence.Add(false); break; //add coffee to ritual list
-      case 1: Globals.ritualSequence.Add(false); break; //add wash dishes to ritual list
-      case 2: Globals.ritualSequence.Add(false); break; //add play piano to ritual list
-      case 3: Globals.ritualSequence.Add(false); break; //add throw away trash to ritual list
+    Debug.Log("curScene = " + Globals.curScene);
+    if(Globals.curScene == Globals.ritualSequence.Count)
+    {
+      switch (Globals.curScene){
+        case 0: Globals.ritualSequence.Add(false); break; //add coffee to ritual list
+        case 1: Globals.ritualSequence.Add(false); break; //add wash dishes to ritual list
+        case 2: Globals.ritualSequence.Add(false); break; //add play piano to ritual list
+        case 3: Globals.ritualSequence.Add(false); break; //add throw away trash to ritual list
+      }
     }
     Globals.radioIsOn = true;
     

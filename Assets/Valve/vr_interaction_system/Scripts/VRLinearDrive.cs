@@ -29,13 +29,16 @@ public class VRLinearDrive : MonoBehaviour
 	void LoadScene()
 	{
 		bool nextLevel = true;
+		Debug.Log("COUNT: " + Globals.ritualSequence.Count);
 		for(int i = 0; i < Globals.ritualSequence.Count && nextLevel; i++)
 		{
 			nextLevel = (bool) Globals.ritualSequence[i];
 		}
 
-		if(nextLevel)
+		if(nextLevel) {
 			Globals.curScene++;
+			Debug.Log("NEXT SCENE");
+		}
 
 		Debug.Log("Loading: " + Globals.curScene);
 		SceneManager.LoadScene(Globals.curScene);
