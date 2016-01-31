@@ -8,7 +8,9 @@ public class Globals{
     public static bool buttonPressed = false;
     public static int nextScene = 1;
     public static float ritualValue = 0;
-    
+
+    public static bool radioIsOn = false;
+
     //radio stuff
     public static bool [] ritualSequence; 
     public static int numScenes = 3;

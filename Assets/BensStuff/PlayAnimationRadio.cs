@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayAnimation : MonoBehaviour {
+public class PlayAnimationRadio : MonoBehaviour {
     Animation anim;
 
 	// Use this for initialization
@@ -17,6 +17,8 @@ public class PlayAnimation : MonoBehaviour {
     void OnHandHoverBegin(VRHand hand)
     {
         anim.Play();
-        Globals.buttonPressed = !Globals.buttonPressed;
+        Globals.radioIsOn = !Globals.radioIsOn;
+
+        Debug.Log(Globals.radioIsOn);
     }
 }
