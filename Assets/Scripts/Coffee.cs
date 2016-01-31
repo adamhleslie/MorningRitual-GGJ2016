@@ -3,29 +3,42 @@ using System.Collections;
 
 public class Coffee : MonoBehaviour {
 
-    // Update is called once per frame
-    void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.tag == "CoffeeCollider")
+    float timeStart;
+    float fillAmount;
+
+    void Start () {
+        timeStart = 0;
+        fillAmount = 0;
+    }
+
+    void OnTriggerEnter(Collider other) {
+        if(other.gameObject.tag == "CoffeeCollider")
         {
-            Debug.Log("Coffee Mug Entered Collider");
+            Debug.Log("Coffee Mug Entered Trigger");
+            timeStart = Time.time;
         }
-	}
+    }
 
-    // void OnCollisionStay(Collision collision)
-    // {
-    //     if (Globals.testCollisions.Count > 5)
-    //     {
-    //         Globals.testingFloor = true;
-    //     }
-    //     Debug.Log("Stay" + Globals.testingFloor);
-    // }
+    void OnTriggerStay(Collider other) {
+        // if(other.gameObject.tag == "CoffeeCollider")
+        // {
+        //     Debug.Log("Coffee Mug Within Trigger");
+        // }
+    }
 
-    // void OnCollisionExit(Collision collision)
-    // {
-    //     if(collision.GameObject.tag == "CoffeeCollider")
-    //     {
-            
-    //     }
-    // }
+    void OnTriggerExit(Collider other) {
+        if(other.gameObject.tag == "CoffeeCollider")
+        {
+            finishFilling();
+        }
+    }
+
+    void finishFilling() {
+        if(timeStart != 0)
+        {
+            fillAmount += Time.time - timeStart;
+            timeStart = 0;
+            Debug.Log("Filled to " + fillAmount);
+        }
+    }
 }
