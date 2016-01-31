@@ -42,13 +42,13 @@ public class RadioScript : MonoBehaviour {
         intro: 0
         good-event-n: 2n+1
         bad-event-n: 2n+2
-        conclusion: last thing obviously
+        conclusion: last thing
       */
       if (ritualSequenceIndex < Globals.curScene){ //news stories
         if ((bool) (Globals.ritualSequence[ritualSequenceIndex]) == true)
-          audioClipIndex=2*ritualSequenceIndex+1;
+          audioClipIndex=2*ritualSequenceIndex+1; //play good event
         else
-          audioClipIndex=2*ritualSequenceIndex+2;
+          audioClipIndex=2*ritualSequenceIndex+2; //play bad event
         ritualSequenceIndex++;
       }
       else if(ritualSequenceIndex == Globals.curScene){ //conclusion
