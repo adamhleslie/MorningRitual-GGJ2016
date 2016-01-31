@@ -14,16 +14,15 @@ public class Globals{
 
     //radio stuff
     public static ArrayList ritualSequence = new ArrayList();
-    //coffee, wash dishes, play piano, throw away trash
     public static int numScenes = 3;
     
     //called when a level is loaded
     void OnLevelWasLoaded(int level) {
       switch (level){
-        case 0: ritualSequence.Add(false); break;
-        case 1: ritualSequence.Add(false); break;
-        case 2: ritualSequence.Add(false);  break;
-        case 3: ritualSequence.Add(false);  break;
+        case 0: ritualSequence.Add(false); break; //coffee
+        case 1: ritualSequence.Add(false); break; //wash dishes
+        case 2: ritualSequence.Add(false); break; //play piano
+        case 3: ritualSequence.Add(false); break; //throw away trash
       }
       
       if(level>=1 && level <=3){
