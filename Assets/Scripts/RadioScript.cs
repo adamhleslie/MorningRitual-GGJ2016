@@ -6,7 +6,6 @@ public class RadioScript : MonoBehaviour {
   private int audioClipIndex = 0;
   private int ritualSequenceIndex = 0;
   
-  
   void Awake(){
     if (Globals.curScene >= 1 && Globals.curScene <= 3)
     {
