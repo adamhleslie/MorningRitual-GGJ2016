@@ -15,8 +15,8 @@ public class Coffee : MonoBehaviour {
     void Update() {
         if(fillAmount >= 0 && Vector3.Dot(coffeeLiquidTransform.up, Vector3.down) > 0)
         {
-            fillAmount == 0;
-            
+            fillAmount = 0;
+            coffeeLiquidTransform.localScale = initialScale + (Vector3.up * (fillAmount / 100));
         }
     }
 
