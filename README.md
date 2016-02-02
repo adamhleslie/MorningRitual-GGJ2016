@@ -1,5 +1,5 @@
 # Global Game Jam
-#### Adam Leslie, Charlie Gao,Ben Johnson, Kevin Lam, Brooke Taylor, Brian Kelley
+#### Adam Leslie, Charlie Gao, Ben Johnson, Kevin Lam, Brooke Taylor, Brian Kelley
 
 Our game made for the HTC Vive. Special thanks to Valve and HTC for the opportunity!
 
